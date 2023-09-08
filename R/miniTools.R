@@ -14,24 +14,109 @@
 #'
 NULL
 
-#' @title source local
+#' @title source_local - source file, from absolute or relative path
 #'
 #' @description source_local
-#' Transforms a path to be relative to the main script, and sources the path.
+#' Transforms a relative path to an absolute one, and sources the path.
 #' This helps source files located relatively to the main script without
 #' the need to know from where it was run.
 #' @param ... paths, character vector of file paths to source
+#' @param env an environement in which to source the paths
+#' @param do_print a logical, telling whether to print sourced paths or
+#'   not
+#' @param keep_source See the parameter keep.source from source
 #' @return a vector resulting from the sourcing of the files provided.
 #'
 #' @examples
-#' \donttest{
-#'    W4MRUtils::source_local("example.R", "RcheckLibrary.R")
+#' ## let's say we have some R file with the following content:
+#' file_1_content <- "
+#'   setup_logger <- function(args, logger) {
+#'     if (!is.null(args$verbose) && args$verbose) {
+#'       logger$set_verbose(TRUE)
+#'     }
+#'     if (!is.null(args$debug) && args$debug) {
+#'       logger$set_debug(TRUE)
+#'     }
+#'     if (!is.null(args$logs)) {
+#'       logger$add_out_paths(args$logs)
+#'     }
+#'   }"
+#' file_2_content <- "
+#'   processing <- function(args, logger) {
+#'     logger$info(\"The tool is working...\")
+#'     logger$infof(
+#'       \"Parameters: %s\",
+#'       paste(capture.output(str(args)), collapse = \"\n\")
+#'     )
+#'     logger$info(\"The tool ended fine.\")
+#'     return(invisible(NULL))
+#'   }"
+#'
+#' if(!file.create(temp_path <- tempfile(fileext = ".R"))) {
+#'   stop("This documentation is not terminated doe to unknown error")
 #' }
+#' writeLines(file_1_content, con = temp_path)
+#'
+#' local_path = "test-local-path.R"
+#' local_full_path = file.path(get_base_dir(), local_path)
+#' if(!file.create(local_full_path)) {
+#'   stop("This documentation is not terminated doe to unknown error")
+#' }
+#' writeLines(file_2_content, con = local_full_path)
+#'
+#' ## now when we source them, the absolute path is sourced, and the
+#' ## relative file path is sourced too.
+#' W4MRUtils::source_local(c(temp_path, local_path), do_print = TRUE)
+#' file.remove(local_full_path)
+#'
+#' ## the function is accessible here
+#' processing(list(), get_logger("Tool Name"))
+#'
+#' @seealso [source()]
+#'
 #' @export
-source_local <- function(...) {
+source_local <- function(
+  ...,
+  env = FALSE,
+  do_print = FALSE,
+  keep_source = TRUE
+) {
+  do_source <- function(path) {
+    if (do_print) {
+      printf("Sourcing %s", path)
+    }
+    base::source(path, local = env, keep.source = keep_source)
+  }
+  base_dir <- get_base_dir()
+  files <- c(...)
+  absolute_filter <- grepl("^/|[a-zA-Z]+:\\\\", files, perl = TRUE)
+  non_absolutes <- file.path(base_dir, files[!absolute_filter])
+  result <- lapply(
+    c(files[absolute_filter], non_absolutes),
+    do_source
+  )
+  return(invisible(result))
+}
+
+#' @title get_base_dir - to get... the base directory
+#'
+#' @description get_base_dir
+#' @return the directory path of the main script. PWD otherwise.
+#'
+#' @examples
+#' print(get_base_dir())
+#'
+#' @export
+get_base_dir <- function() {
   argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  return(lapply(file.path(base_dir, c(...)), source))
+  base_dir <- dirname(substring(argv[grep("^--file=", argv, perl = TRUE)], 8))
+  if (is.null(base_dir) || length(base_dir) == 0 || base_dir == ".") {
+    base_dir <- dirname(argv[grep("^-f$", argv, perl = TRUE) + 1])
+  }
+  if (is.null(base_dir) || length(base_dir) == 0 || base_dir == ".") {
+    base_dir <- getwd()
+  }
+  return(base_dir)
 }
 
 #' @title Shy Lib
@@ -88,19 +173,36 @@ shy_lib <- function(...) {
 #'  values into logical if their value is "TRUE" or "FALSE".
 #' @param convert_numerics logical - tells the function to convert
 #'  values into numeric if possible.
+#' @param strip_trailing_dash - tells whether to remove trailing hyphens from
+#'   the start of the parameter name
+#' @param replace_dashes - tells whether to turn trailing hyphens into
+#'   underscores
 #' @return a named \code{list} object containing the input parameters in values
 #'  and the parameters names in names
 #'
 #' @author L.Pavot
 #' @examples
-#' parameters <- W4MRUtils::parse_args()
-#' print(parameters$`some-parameter`)
+#' ## faking command line parameters:
+#'
+#' commandArgs <- function() {
+#'   list(
+#'     "--args",
+#'     "param1", "a value",
+#'     "param2", "42"
+#'   )
+#' }
+#'
+#' ## extracting command line parameters:
+#' parameters <- W4MRUtils::parse_args(args = commandArgs())
+#' str(parameters)
 #'
 #' @export
 parse_args <- function(
   args = NULL,
   convert_booleans = TRUE,
-  convert_numerics = TRUE
+  convert_numerics = TRUE,
+  strip_trailing_dash = TRUE,
+  replace_dashes = TRUE
 ) {
   warning(
     "Please, use the 'optparse' library instead of the 'parse_args' function."
@@ -115,6 +217,12 @@ parse_args <- function(
   seq_by2 <- seq(start, length(args), by = 2)
   result <- as.list(args[seq_by2 + 1])
   names(result) <- args[seq_by2]
+  if (strip_trailing_dash) {
+    names(result) <- gsub("^-+", "", names(result), perl = TRUE)
+  }
+  if (replace_dashes) {
+    names(result) <- gsub("-", "_", names(result))
+  }
   converters <- c()
   if (convert_booleans) {
     converters <- c(
@@ -323,4 +431,149 @@ reproduce_id <- function(data_matrix, metadata, metadata_type, id_match) {
   rownames(data_matrix) <- NULL
   # return datasets - - - - - - - - - - -
   return(list(dataMatrix = data_matrix, Metadata = metadata))
+}
+
+#' @title Import two W4M tables
+#'
+#' @description import2
+#' Function to import a metadata table file and its corresponding
+#' dataMatrix file.
+#' import2 performs checks to ensure the identifiers match between
+#' the two tables and stops with an explicit error message in case
+#' identifiers do not match.
+#'
+#' @param pathDM a path to a file corresponding to the dataMatrix
+#' @param pathMeta a path to a file corresponding to the metadata table
+#' @param typeMeta "sample" or "variable" depending on the metadata content
+#' @param disable_comm a \code{boolean} with default to \code{TRUE} to indicate
+#' whether the comment character \code{#} should be disabled as a comment tag
+#' for the import of the metadata file; when \code{TRUE}, \code{#} in the
+#' metadata table's columns will be considered as any other character.
+#' @return a \code{list} containing two elements:
+#'  - dataMatrix a \code{data.frame} corresponding to the imported dataMatrix table;
+#'  - metadata a \code{data.frame} corresponding to the imported metadata table
+#'
+#' @examples
+#' \donttest{
+#'
+#' dm_path <- system.file(
+#'   "extdata",
+#'   "mini_datamatrix.txt",
+#'   package="W4MRUtils"
+#' )
+#' meta_path <- system.file(
+#'   "extdata",
+#'   "mini_variablemetadata.txt",
+#'   package="W4MRUtils"
+#' )
+#'
+#' ## import considering # is not a comment character
+#' A <- W4MRUtils::import2(dm_path, meta_path, "variable")
+#' print(A$dataMatrix[1:5, 1:5])
+#' print(A$metadata[1:5, ])
+#'
+#' ## import considering # is a comment character
+#' B <- W4MRUtils::import2(dm_path, meta_path, "variable", disable_comm = FALSE)
+#' print(B$dataMatrix[1:5, 1:5])
+#' print(B$metadata[1:5, ])
+#' }
+#'
+#' @author M.Petera
+#'
+#' @export
+import2 <- function(pathDM, pathMeta, typeMeta, disable_comm = TRUE){
+  input_check <- c(
+    ifelse(is.character(pathDM), "", "/!\\ The input dataMatrix path parameter is not a character string.\n"),
+    ifelse(is.character(pathMeta), "", "/!\\ The input metadata file path parameter is not a character string.\n"),
+    ifelse(typeMeta %in% c("sample", "variable"), "", "/!\\ The input metadata type parameter is not one of 'sample' and 'variable'.\n"),
+    ifelse(is.logical(disable_comm), "", "/!\\ The input disable_comm parameter is not one of 'TRUE' and 'FALSE'. \n"))
+  if(sum(input_check == "") != 4) {
+    W4MRUtils::check_err(input_check)
+  }
+  comm_option <- ifelse(disable_comm, "", "#")
+  # Table import
+  DM <- read.table(pathDM, header = TRUE, sep = "\t", check.names = FALSE)
+  meta <- read.table(pathMeta, header = TRUE, sep = "\t", check.names = FALSE, comment.char = comm_option)
+  # Table match check
+  table_check <- W4MRUtils::match2(DM, meta, typeMeta)
+  W4MRUtils::check_err(table_check)
+  # Return
+  return(list(dataMatrix = DM, metadata = meta))
+}
+
+#' @title Import the three W4M tables
+#'
+#' @description import3
+#' Function to import the three W4M tables from files
+#' (dataMatrix, sampleMetadata, variableMetadata)
+#' import3 performs checks to ensure the identifiers match between
+#' the three tables and stops with an explicit error message in case
+#' identifiers do not match.
+#'
+#' @param pathDM a path to a file corresponding to the dataMatrix
+#' @param pathSM a path to a file corresponding to the sampleMetadata
+#' @param pathVM a path to a file corresponding to the variableMetadata
+#' @param disable_comm a \code{boolean} with default to \code{TRUE} to indicate
+#' whether the comment character \code{#} should be disabled as a comment tag
+#' for the import of the metadata files; when \code{TRUE}, \code{#} in the
+#' metadata table's columns will be considered as any other character.
+#' @return a \code{list} containing three elements:
+#'  - dataMatrix a \code{data.frame} corresponding to the imported dataMatrix table;
+#'  - sampleMetadata a \code{data.frame} corresponding to the imported sampleMetadata table;
+#'  - variableMetadata a \code{data.frame} corresponding to the imported variableMetadata table
+#'
+#' @examples
+#' \donttest{
+#'
+#' dm_path <- system.file(
+#'   "extdata",
+#'   "mini_datamatrix.txt",
+#'   package="W4MRUtils"
+#' )
+#' vm_path <- system.file(
+#'   "extdata",
+#'   "mini_variablemetadata.txt",
+#'   package="W4MRUtils"
+#' )
+#' sm_path <- system.file(
+#'   "extdata",
+#'   "mini_samplemetadata.txt",
+#'   package="W4MRUtils"
+#' )
+#'
+#' ## import considering # is not a comment character
+#' A <- W4MRUtils::import3(dm_path, sm_path, vm_path)
+#' print(A$dataMatrix[1:5, 1:5])
+#' print(A$sampleMetadata[1:5, ])
+#' print(A$variableMetadata[1:5, ])
+#'
+#' ## import considering # is a comment character
+#' B <- W4MRUtils::import3(dm_path, sm_path, vm_path, disable_comm = FALSE)
+#' print(B$dataMatrix[1:5, 1:5])
+#' print(B$sampleMetadata[1:5, ])
+#' print(B$variableMetadata[1:5, ])
+#' }
+#'
+#' @author M.Petera
+#'
+#' @export
+import3 <- function(pathDM, pathSM, pathVM, disable_comm = TRUE){
+  input_check <- c(
+    ifelse(is.character(pathDM), "", "/!\\ The input dataMatrix path parameter is not a character string.\n"),
+    ifelse(is.character(pathSM), "", "/!\\ The input sampleMetadata file path parameter is not a character string.\n"),
+    ifelse(is.character(pathVM), "", "/!\\ The input variableMetadata file path parameter is not a character string.\n"),
+    ifelse(is.logical(disable_comm), "", "/!\\ The input disable_comm parameter is not one of 'TRUE' and 'FALSE'. \n"))
+  if(sum(input_check == "") != 4) {
+    W4MRUtils::check_err(input_check)
+  }
+  comm_option <- ifelse(disable_comm, "", "#")
+  # Table import
+  DM <- read.table(pathDM, header = TRUE, sep = "\t", check.names = FALSE)
+  VM <- read.table(pathVM, header = TRUE, sep = "\t", check.names = FALSE, comment.char = comm_option)
+  SM <- read.table(pathSM, header = TRUE, sep = "\t", check.names = FALSE, comment.char = comm_option)
+  # Table match check
+  table_check <- W4MRUtils::match3(DM, SM, VM)
+  W4MRUtils::check_err(table_check)
+  # Return
+  return(list(dataMatrix = DM, sampleMetadata = SM, variableMetadata = VM))
 }

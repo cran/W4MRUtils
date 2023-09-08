@@ -4,7 +4,13 @@
 \alias{parse_args}
 \title{Parse Command arguments}
 \usage{
-parse_args(args = NULL, convert_booleans = TRUE, convert_numerics = TRUE)
+parse_args(
+  args = NULL,
+  convert_booleans = TRUE,
+  convert_numerics = TRUE,
+  strip_trailing_dash = TRUE,
+  replace_dashes = TRUE
+)
 }
 \arguments{
 \item{args}{optional, provide arguments to parse.
@@ -15,6 +21,16 @@ values into logical if their value is "TRUE" or "FALSE".}
 
 \item{convert_numerics}{logical - tells the function to convert
 values into numeric if possible.}
+
+\item{strip_trailing_dash}{\itemize{
+\item tells whether to remove trailing hyphens from
+the start of the parameter name
+}}
+
+\item{replace_dashes}{\itemize{
+\item tells whether to turn trailing hyphens into
+underscores
+}}
 }
 \value{
 a named \code{list} object containing the input parameters in values
@@ -40,8 +56,19 @@ args$`some-list` <- as.numeric(strsplit(args$`some-list`, ",")[[1]])
 }\if{html}{\out{</div>}}
 }
 \examples{
-parameters <- W4MRUtils::parse_args()
-print(parameters$`some-parameter`)
+## faking command line parameters:
+
+commandArgs <- function() {
+  list(
+    "--args",
+    "param1", "a value",
+    "param2", "42"
+  )
+}
+
+## extracting command line parameters:
+parameters <- W4MRUtils::parse_args(args = commandArgs())
+str(parameters)
 
 }
 \author{

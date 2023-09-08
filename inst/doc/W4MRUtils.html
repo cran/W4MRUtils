@@ -326,7 +326,130 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(W4MRUtils)</a></code></pre></div>
+<div id="introduction-package-history-and-purpose" class="section level1">
+<h1>Introduction: package history and purpose</h1>
+<p>Workflow4Metabolomics (W4M) provides tools to help people to process metabolomic datasets. Its preferred Chanel is the web-based interface <a href="https://galaxyproject.org/">Galaxy</a>, particularly suited for analysts with no skill regarding software programing nor programing language in general. Galaxy also has the advantage to be compatible with a large variety of languages, enabling to combine tools coded in various programing languages, which is a huge advantage regarding to the diversity of steps (and thus tools) needed for comprehensive metabolomic data processing.</p>
+<p>Nonetheless, a significant part of the tools provided by W4M are coded using R. Due to the diversity of tools, W4M chose to adopt common standards across its tools, in particular regarding data table formats and basics data checks. It also intents to gather utility functions to help the construction of R-based Galaxy tools using W4M standards, along with functions to easily handle basic actions given the W4M table data format.</p>
+<p>The <code>W4MRUtils</code> package is meant to gather such functions, to enable W4M R-based Galaxy tools to have easy access to these standardised approaches.</p>
+</div>
+<div id="how-to-use-the-package" class="section level1">
+<h1>How to use the package</h1>
+<div id="what-you-should-know-about-the-w4m-standards" class="section level2">
+<h2>What you should know about the W4M standards</h2>
+<p>Some functions are closely linked to Galaxy integration as the <code>parse_args</code> function for example, but a large variety of functions can be helpful independently of Galaxy. To use these functions, it is useful to understand the choices made by W4M, in particular regarding the formats, as these will be often used as input parameters for functions.</p>
+<p>The main format aspect to consider is the W4M 3-tables format. Metabolomic data, similarly to other types of ’omics data, can be divided in 3 main types of information:</p>
+<ul>
+<li>analysed samples’ information (sample meta-data, <code>sampleMetadata</code> in short): it corresponds to information regarding the samples that have been analysed with an analytical device; this covers any information about the samples that is not the analytical measures themselves (examples: studied biological groups, batches of analysis)</li>
+<li>analytical measures (<code>dataMatrix</code> in short): it corresponds to the intensities measured using the analytical device used; it is a table with intensity values for each sample and for each analytical variable</li>
+<li>analytical variables’ information (variable meta-data, <code>variableMetadata</code> in short): it corresponds to information regarding the variables that have been measured through the analytical device; this covers any information about the variables that is not the analytical measures themselves (examples: m/z ratios for MS data, chemical shift for NMR data)</li>
+</ul>
+<p>These 3 types of information can be stocked in 3 distinct tables. In the package, the chosen format is the following:</p>
+<ul>
+<li>sampleMetadata: the samples’ identifiers are positioned as the first column in the table; the table can contain as many columns as you want, each column being a specific information about samples (<em>e.g.</em> a header indicating ‘Groups’ and the content being ‘A’ or ‘B’ depending on each sample’s affiliation)</li>
+<li>variableMetadata: same idea than the sampleMetadata, but for analytical variables; thus the analytical variables’ identifiers are positioned as the first column in the table, and additional columns correspond to information about the variables (<em>e.g.</em> the p-values associated to each variable regarding a given test applied on each variable)</li>
+<li>dataMatrix: the analytical variables’ identifiers are positioned as the first column, and the samples’ identifiers are given as the header; the remaining cells are quantitative values corresponding to the measured intensities</li>
+</ul>
+<p>These 3 tables are standard inputs and/or outputs for several of the functions found in this package. Consequently, when you need to specify sample-wise or variable-wise information, you will generally be invited to stock it in one of these tables (same goes for outputs of functions, where to find the generated information).</p>
+</div>
+<div id="about-the-types-of-functions-in-the-package" class="section level2">
+<h2>About the types of functions in the package</h2>
+<p>There are several types of functions in the package. Globally, you will find functions enabling the following:</p>
+<ul>
+<li>importing and/or checking parameters (in a Galaxy-oriented way)</li>
+<li>importing and/or checking data tables (in a W4M-oriented way)</li>
+<li>managing identifiers and/or formats</li>
+<li>managing computing information and/or error messages (in a user-targeted way)</li>
+</ul>
+</div>
+</div>
+<div id="usage-example-for-galaxy-tools" class="section level1">
+<h1>Usage example for galaxy tools</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(W4MRUtils)</a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3">TOOL_NAME &lt;-<span class="st"> &quot;A Test Tool&quot;</span> <span class="co">#nolint</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">logger &lt;-<span class="st"> </span><span class="kw">get_logger</span>(TOOL_NAME)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Parsing parameters...&quot;</span>)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - Parsing parameters...[m</span></a>
+<a class="sourceLine" id="cb3-3" title="3">args &lt;-<span class="st"> </span><span class="kw">optparse_parameters</span>(</a>
+<a class="sourceLine" id="cb3-4" title="4">  <span class="dt">input =</span> <span class="kw">optparse_character</span>(),</a>
+<a class="sourceLine" id="cb3-5" title="5">  <span class="dt">output =</span> <span class="kw">optparse_character</span>(),</a>
+<a class="sourceLine" id="cb3-6" title="6">  <span class="dt">threshold =</span> <span class="kw">optparse_numeric</span>(<span class="dt">default =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb3-7" title="7">  <span class="dt">args =</span> <span class="kw">commandArgs</span>()</a>
+<a class="sourceLine" id="cb3-8" title="8">)</a>
+<a class="sourceLine" id="cb3-9" title="9">logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Parsing parameters OK.&quot;</span>)</a>
+<a class="sourceLine" id="cb3-10" title="10"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - Parsing parameters OK.[m</span></a>
+<a class="sourceLine" id="cb3-11" title="11"><span class="kw">show_galaxy_header</span>(</a>
+<a class="sourceLine" id="cb3-12" title="12">  TOOL_NAME,</a>
+<a class="sourceLine" id="cb3-13" title="13">  <span class="st">&quot;1.2.0&quot;</span>,</a>
+<a class="sourceLine" id="cb3-14" title="14">  <span class="dt">args =</span> args,</a>
+<a class="sourceLine" id="cb3-15" title="15">  <span class="dt">logger =</span> logger,</a>
+<a class="sourceLine" id="cb3-16" title="16">  <span class="dt">show_sys =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb3-17" title="17">)</a>
+<a class="sourceLine" id="cb3-18" title="18"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - Job starting time:[m</span></a>
+<a class="sourceLine" id="cb3-19" title="19"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - ven. 08 sept. 2023 16:31:35[m</span></a>
+<a class="sourceLine" id="cb3-20" title="20"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - ------------------------------------------------------------------------------[m</span></a>
+<a class="sourceLine" id="cb3-21" title="21"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - Parameters used in A Test Tool - version 1.2.0:[m</span></a>
+<a class="sourceLine" id="cb3-22" title="22"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - [m</span></a>
+<a class="sourceLine" id="cb3-23" title="23"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - List of 4[m</span></a>
+<a class="sourceLine" id="cb3-24" title="24"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] -  $ help     : logi FALSE[m</span></a>
+<a class="sourceLine" id="cb3-25" title="25"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] -  $ input    : chr &quot;/tmp/RtmpsJ5uhs/./input.csv&quot;[m</span></a>
+<a class="sourceLine" id="cb3-26" title="26"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] -  $ output   : chr &quot;/tmp/RtmpsJ5uhs/./output.csv&quot;[m</span></a>
+<a class="sourceLine" id="cb3-27" title="27"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] -  $ threshold: num 2[m</span></a>
+<a class="sourceLine" id="cb3-28" title="28"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - ------------------------------------------------------------------------------[m</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">check_parameters &lt;-<span class="st"> </span><span class="cf">function</span>(args, logger) {</a>
+<a class="sourceLine" id="cb4-2" title="2">  logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Checking parameters...&quot;</span>)</a>
+<a class="sourceLine" id="cb4-3" title="3">  <span class="kw">check_one_character</span>(args<span class="op">$</span>input)</a>
+<a class="sourceLine" id="cb4-4" title="4">  <span class="kw">check_one_character</span>(args<span class="op">$</span>output)</a>
+<a class="sourceLine" id="cb4-5" title="5">  <span class="kw">check_one_numeric</span>(args<span class="op">$</span>threshold)</a>
+<a class="sourceLine" id="cb4-6" title="6">  <span class="cf">if</span> (args<span class="op">$</span>threshold <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>) {</a>
+<a class="sourceLine" id="cb4-7" title="7">    logger<span class="op">$</span><span class="kw">errorf</span>(</a>
+<a class="sourceLine" id="cb4-8" title="8">      <span class="st">&quot;The threshold is too low (%s). Cannot continue&quot;</span>, args<span class="op">$</span>threshold</a>
+<a class="sourceLine" id="cb4-9" title="9">    )</a>
+<a class="sourceLine" id="cb4-10" title="10">    <span class="kw">stopf</span>(<span class="st">&quot;Threshold = %s is tool low.&quot;</span>, args<span class="op">$</span>threshold)</a>
+<a class="sourceLine" id="cb4-11" title="11">  }</a>
+<a class="sourceLine" id="cb4-12" title="12">  <span class="cf">if</span> (args<span class="op">$</span>threshold <span class="op">&lt;</span><span class="st"> </span><span class="dv">3</span>) {</a>
+<a class="sourceLine" id="cb4-13" title="13">    logger<span class="op">$</span><span class="kw">warningf</span>(</a>
+<a class="sourceLine" id="cb4-14" title="14">      <span class="kw">paste</span>(</a>
+<a class="sourceLine" id="cb4-15" title="15">        <span class="st">&quot;The threshold is very low (%s).&quot;</span>,</a>
+<a class="sourceLine" id="cb4-16" title="16">        <span class="st">&quot;This may lead to erroneous results.&quot;</span></a>
+<a class="sourceLine" id="cb4-17" title="17">      ),</a>
+<a class="sourceLine" id="cb4-18" title="18">      args<span class="op">$</span>threshold</a>
+<a class="sourceLine" id="cb4-19" title="19">    )</a>
+<a class="sourceLine" id="cb4-20" title="20">  }</a>
+<a class="sourceLine" id="cb4-21" title="21">  logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Parameters OK.&quot;</span>)</a>
+<a class="sourceLine" id="cb4-22" title="22">}</a>
+<a class="sourceLine" id="cb4-23" title="23"></a>
+<a class="sourceLine" id="cb4-24" title="24">read_input &lt;-<span class="st"> </span><span class="cf">function</span>(args, logger) {</a>
+<a class="sourceLine" id="cb4-25" title="25">  logger<span class="op">$</span><span class="kw">infof</span>(<span class="st">&quot;Reading file in %s ...&quot;</span>, args<span class="op">$</span>input)</a>
+<a class="sourceLine" id="cb4-26" title="26">  <span class="kw">return</span>(<span class="kw">read.csv</span>(args<span class="op">$</span>input))</a>
+<a class="sourceLine" id="cb4-27" title="27">}</a>
+<a class="sourceLine" id="cb4-28" title="28"></a>
+<a class="sourceLine" id="cb4-29" title="29">process_input &lt;-<span class="st"> </span><span class="cf">function</span>(args, logger, table) {</a>
+<a class="sourceLine" id="cb4-30" title="30">  filter &lt;-<span class="st"> </span>table[<span class="dv">1</span>, ] <span class="op">&gt;</span><span class="st"> </span>args<span class="op">$</span>threshold</a>
+<a class="sourceLine" id="cb4-31" title="31">  logger<span class="op">$</span><span class="kw">infof</span>(</a>
+<a class="sourceLine" id="cb4-32" title="32">    <span class="st">&quot;%s values filtered (%s%%)&quot;</span>,</a>
+<a class="sourceLine" id="cb4-33" title="33">    <span class="kw">length</span>(filter),</a>
+<a class="sourceLine" id="cb4-34" title="34">    <span class="kw">round</span>(<span class="kw">length</span>(filter) <span class="op">/</span><span class="st"> </span><span class="kw">nrow</span>(table) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb4-35" title="35">  )</a>
+<a class="sourceLine" id="cb4-36" title="36">  <span class="cf">if</span> (<span class="kw">length</span>(filter) <span class="op">==</span><span class="st"> </span><span class="kw">nrow</span>(table)) {</a>
+<a class="sourceLine" id="cb4-37" title="37">    logger<span class="op">$</span><span class="kw">warning</span>(<span class="st">&quot;All values have been filtered.&quot;</span>)</a>
+<a class="sourceLine" id="cb4-38" title="38">  }</a>
+<a class="sourceLine" id="cb4-39" title="39">  <span class="kw">return</span>(table[<span class="kw">which</span>(table[, <span class="dv">1</span>] <span class="op">&gt;</span><span class="st"> </span>args<span class="op">$</span>threshold), ])</a>
+<a class="sourceLine" id="cb4-40" title="40">}</a>
+<a class="sourceLine" id="cb4-41" title="41"></a>
+<a class="sourceLine" id="cb4-42" title="42">write_output &lt;-<span class="st"> </span><span class="cf">function</span>(args, logger, output) {</a>
+<a class="sourceLine" id="cb4-43" title="43">  logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Writing output file...&quot;</span>)</a>
+<a class="sourceLine" id="cb4-44" title="44">  <span class="kw">write.table</span>(output, args<span class="op">$</span>output)</a>
+<a class="sourceLine" id="cb4-45" title="45">}</a>
+<a class="sourceLine" id="cb4-46" title="46"></a>
+<a class="sourceLine" id="cb4-47" title="47"><span class="co"># check_parameters(args, logger$sublogger(&quot;Param Checking&quot;))</span></a>
+<a class="sourceLine" id="cb4-48" title="48"><span class="co"># input &lt;- read_input(args, logger$sublogger(&quot;Inputs Reader&quot;))</span></a>
+<a class="sourceLine" id="cb4-49" title="49"><span class="co"># print(input)</span></a>
+<a class="sourceLine" id="cb4-50" title="50"><span class="co"># output &lt;- process_input(args, logger$sublogger(&quot;Inputs Processing&quot;), input)</span></a>
+<a class="sourceLine" id="cb4-51" title="51"><span class="co"># print(output)</span></a>
+<a class="sourceLine" id="cb4-52" title="52"><span class="co"># write_output(args, logger$sublogger(&quot;Output Writter&quot;), output)</span></a>
+<a class="sourceLine" id="cb4-53" title="53"><span class="co"># show_galaxy_footer(TOOL_NAME, &quot;1.2.0&quot;, logger = logger, show_packages = FALSE)</span></a></code></pre></div>
+</div>
 
 
 
