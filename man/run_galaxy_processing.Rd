@@ -61,6 +61,10 @@ within.
 case of error.
 }}
 }
+\value{
+\code{NULL} (the function only execute the inputed Galaxy-based
+process in a standardised manner)
+}
 \description{
 run_galaxy_processing takes the tool's name, and the code to execute.
 It detects galaxy-specific environement variable, and show headers

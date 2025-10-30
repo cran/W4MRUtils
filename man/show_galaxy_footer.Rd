@@ -27,6 +27,9 @@ and attached packages.}
 
 \item{ellapsed}{NULL or a \code{character(1)} with execution duration.}
 }
+\value{
+\code{NULL}
+}
 \description{
 This function prints the footer to display in galaxy's tools logs
 }

@@ -13,6 +13,9 @@ stopf(...)
     \item{\code{fmt}}{a character vector of format strings, each of up to 8192 bytes.}
   }}
 }
+\value{
+\code{NULL}
+}
 \description{
 stopf calls sprintf of its parameters to build the error message
 and stops with the given message

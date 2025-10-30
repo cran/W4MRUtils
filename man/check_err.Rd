@@ -10,11 +10,11 @@ check_err(err_stock)
 \item{err_stock}{vector of results returned by check functions}
 }
 \value{
-\code{NULL}
+\code{NULL} (function called for the "stoping" side effects)
 }
 \description{
 check_err
-Generic function stop in error if problems have been encountered
+Generic function that stops in error if problems have been encountered, with printing of the corresponding error information.
 }
 \author{
 M.Petera

@@ -11,13 +11,17 @@ stopaste0(...)
   Arguments passed on to \code{\link[base:paste]{base::paste0}}
   \describe{
     \item{\code{collapse}}{an optional character string to separate the results.  Not
-    \code{\link[base]{NA_character_}}.}
+    \code{\link[base]{NA_character_}}.  When \code{collapse} is a string,
+    the result is always a string (\code{\link[base]{character}} of length 1).}
     \item{\code{recycle0}}{\code{\link[base]{logical}} indicating if zero-length
-    character arguments should lead to the zero-length
-    \code{\link[base]{character}(0)} after the \code{sep}-phase (which turns into
-    \code{""} in the \code{collapse}-phase, i.e., when \code{collapse} is
-    not \code{NULL}).}
+    character arguments should result in the zero-length
+    \code{\link[base]{character}(0)}.  Note that when \code{collapse} is
+    a string, \code{recycle0} does \emph{not} recycle to zero-length, but
+    to \code{""}.}
   }}
+}
+\value{
+\code{NULL}
 }
 \description{
 stopaste calls paste0 of its parameters to build the error message

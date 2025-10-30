@@ -11,6 +11,7 @@
 #'
 #' V0: script structure + first functions
 #' V1: addition of functions to handle special characters in identifiers
+#' V2: addition of a merging function
 #'
 NULL
 
@@ -26,51 +27,6 @@ NULL
 #'   not
 #' @param keep_source See the parameter keep.source from source
 #' @return a vector resulting from the sourcing of the files provided.
-#'
-#' @examples
-#' ## let's say we have some R file with the following content:
-#' file_1_content <- "
-#'   setup_logger <- function(args, logger) {
-#'     if (!is.null(args$verbose) && args$verbose) {
-#'       logger$set_verbose(TRUE)
-#'     }
-#'     if (!is.null(args$debug) && args$debug) {
-#'       logger$set_debug(TRUE)
-#'     }
-#'     if (!is.null(args$logs)) {
-#'       logger$add_out_paths(args$logs)
-#'     }
-#'   }"
-#' file_2_content <- "
-#'   processing <- function(args, logger) {
-#'     logger$info(\"The tool is working...\")
-#'     logger$infof(
-#'       \"Parameters: %s\",
-#'       paste(capture.output(str(args)), collapse = \"\n\")
-#'     )
-#'     logger$info(\"The tool ended fine.\")
-#'     return(invisible(NULL))
-#'   }"
-#'
-#' if(!file.create(temp_path <- tempfile(fileext = ".R"))) {
-#'   stop("This documentation is not terminated doe to unknown error")
-#' }
-#' writeLines(file_1_content, con = temp_path)
-#'
-#' local_path = "test-local-path.R"
-#' local_full_path = file.path(get_base_dir(), local_path)
-#' if(!file.create(local_full_path)) {
-#'   stop("This documentation is not terminated doe to unknown error")
-#' }
-#' writeLines(file_2_content, con = local_full_path)
-#'
-#' ## now when we source them, the absolute path is sourced, and the
-#' ## relative file path is sourced too.
-#' W4MRUtils::source_local(c(temp_path, local_path), do_print = TRUE)
-#' file.remove(local_full_path)
-#'
-#' ## the function is accessible here
-#' processing(list(), get_logger("Tool Name"))
 #'
 #' @seealso [source()]
 #'
@@ -204,8 +160,8 @@ parse_args <- function(
   strip_trailing_dash = TRUE,
   replace_dashes = TRUE
 ) {
-  warning(
-    "Please, use the 'optparse' library instead of the 'parse_args' function."
+  message(
+    "Please, use the 'optparse' library instead of the 'parse_args' function in the future."
   )
   if (is.null(args)) {
     args <- commandArgs()
@@ -576,4 +532,35 @@ import3 <- function(pathDM, pathSM, pathVM, disable_comm = TRUE){
   W4MRUtils::check_err(table_check)
   # Return
   return(list(dataMatrix = DM, sampleMetadata = SM, variableMetadata = VM))
+}
+
+#' @title Merging a dataMatrix with a metadata file
+#'
+#' @description metab_merge
+#' Function to merge the dataMatrix table with one of its corresponding
+#' metadata table (sampleMetadata or variableMetadata)
+#'
+#' @param DM Data.frame corresponding to the dataMatrix you want to merge with a metadata table
+#' @param meta Data.frame corresponding to the metadata table you want to merge with the dataMatrix
+#' @param metype Character string indicating the type of metadata table used; should be one between "sample" and "variable"
+#' @return a \code{data.frame} corresponding to a combined table with both intensities and metadata
+#'
+#' @author M.Petera
+#'
+#' @export
+metab_merge <- function(DM, meta, metype = "sample") {
+  # Checking tables match regarding identifiers
+  table.check <- W4MRUtils::match2(DM, meta, metype)
+  W4MRUtils::check_err(table.check)
+  # Transposing if needed
+  if (metype == "sample") {
+    ori.DM <- DM
+    rownames(DM) <- DM[, 1]
+    DM <- DM[, -1]
+    DM <- t(DM)
+    DM <- data.frame(sample = row.names(DM), DM, check.names = FALSE)
+    rownames(DM) <- NULL
+  }
+  comb.data <- merge(x = meta, y = DM, by.x = 1, by.y = 1)
+  return(comb.data)
 }

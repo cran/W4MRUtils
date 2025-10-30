@@ -59,6 +59,9 @@ check_param_* that nframe is 2.
 If the function name is not the right name, it may be because of that.
 So don't fear testing different values for nframes.}
 }
+\value{
+\code{NULL}
+}
 \description{
 Use this function to validate parameters.
 You're never assured that provided parameters from users are the right

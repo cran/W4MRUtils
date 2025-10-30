@@ -19,6 +19,9 @@ run_galaxy_function(tool_name, func, ...)
 \item Parameters propagated to \link{run_galaxy_processing}
 }}
 }
+\value{
+\code{NULL} (function called to provide checks to the execution of \link{run_galaxy_processing})
+}
 \description{
 This function executes the provided function as a galaxy processing
 This provided function is expected to take two parameters:

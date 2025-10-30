@@ -11,6 +11,9 @@ collapse_lines(..., sep = "\\n")
 
 \item{sep}{set the separator. Deafult is "\\n"}
 }
+\value{
+\code{NULL}
+}
 \description{
 collapse_lines() does exactly when paste does, but default collapse = "\\n"
 }

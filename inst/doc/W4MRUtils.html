@@ -14,89 +14,103 @@
 
 <title>W4MRUtils</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {  }
+{ }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -328,127 +342,184 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="introduction-package-history-and-purpose" class="section level1">
 <h1>Introduction: package history and purpose</h1>
-<p>Workflow4Metabolomics (W4M) provides tools to help people to process metabolomic datasets. Its preferred Chanel is the web-based interface <a href="https://galaxyproject.org/">Galaxy</a>, particularly suited for analysts with no skill regarding software programing nor programing language in general. Galaxy also has the advantage to be compatible with a large variety of languages, enabling to combine tools coded in various programing languages, which is a huge advantage regarding to the diversity of steps (and thus tools) needed for comprehensive metabolomic data processing.</p>
-<p>Nonetheless, a significant part of the tools provided by W4M are coded using R. Due to the diversity of tools, W4M chose to adopt common standards across its tools, in particular regarding data table formats and basics data checks. It also intents to gather utility functions to help the construction of R-based Galaxy tools using W4M standards, along with functions to easily handle basic actions given the W4M table data format.</p>
-<p>The <code>W4MRUtils</code> package is meant to gather such functions, to enable W4M R-based Galaxy tools to have easy access to these standardised approaches.</p>
+<p>Workflow4Metabolomics (W4M) provides tools to help people to process
+metabolomic datasets. Its preferred Chanel is the web-based interface <a href="https://galaxyproject.org/">Galaxy</a>, particularly suited for
+analysts with no skill regarding software programing nor programing
+language in general. Galaxy also has the advantage to be compatible with
+a large variety of languages, enabling to combine tools coded in various
+programing languages, which is a huge advantage regarding to the
+diversity of steps (and thus tools) needed for comprehensive metabolomic
+data processing.</p>
+<p>Nonetheless, a significant part of the tools provided by W4M are
+coded using R. Due to the diversity of tools, W4M chose to adopt common
+standards across its tools, in particular regarding data table formats
+and basics data checks. It also intents to gather utility functions to
+help the construction of R-based Galaxy tools using W4M standards, along
+with functions to easily handle basic actions given the W4M table data
+format.</p>
+<p>The <code>W4MRUtils</code> package is meant to gather such functions,
+to enable W4M R-based Galaxy tools to have easy access to these
+standardised approaches.</p>
 </div>
 <div id="how-to-use-the-package" class="section level1">
 <h1>How to use the package</h1>
 <div id="what-you-should-know-about-the-w4m-standards" class="section level2">
 <h2>What you should know about the W4M standards</h2>
-<p>Some functions are closely linked to Galaxy integration as the <code>parse_args</code> function for example, but a large variety of functions can be helpful independently of Galaxy. To use these functions, it is useful to understand the choices made by W4M, in particular regarding the formats, as these will be often used as input parameters for functions.</p>
-<p>The main format aspect to consider is the W4M 3-tables format. Metabolomic data, similarly to other types of ’omics data, can be divided in 3 main types of information:</p>
+<p>Some functions are closely linked to Galaxy integration as the
+<code>parse_args</code> function for example, but a large variety of
+functions can be helpful independently of Galaxy. To use these
+functions, it is useful to understand the choices made by W4M, in
+particular regarding the formats, as these will be often used as input
+parameters for functions.</p>
+<p>The main format aspect to consider is the W4M 3-tables format.
+Metabolomic data, similarly to other types of ’omics data, can be
+divided in 3 main types of information:</p>
 <ul>
-<li>analysed samples’ information (sample meta-data, <code>sampleMetadata</code> in short): it corresponds to information regarding the samples that have been analysed with an analytical device; this covers any information about the samples that is not the analytical measures themselves (examples: studied biological groups, batches of analysis)</li>
-<li>analytical measures (<code>dataMatrix</code> in short): it corresponds to the intensities measured using the analytical device used; it is a table with intensity values for each sample and for each analytical variable</li>
-<li>analytical variables’ information (variable meta-data, <code>variableMetadata</code> in short): it corresponds to information regarding the variables that have been measured through the analytical device; this covers any information about the variables that is not the analytical measures themselves (examples: m/z ratios for MS data, chemical shift for NMR data)</li>
+<li>analysed samples’ information (sample meta-data,
+<code>sampleMetadata</code> in short): it corresponds to information
+regarding the samples that have been analysed with an analytical device;
+this covers any information about the samples that is not the analytical
+measures themselves (examples: studied biological groups, batches of
+analysis)</li>
+<li>analytical measures (<code>dataMatrix</code> in short): it
+corresponds to the intensities measured using the analytical device
+used; it is a table with intensity values for each sample and for each
+analytical variable</li>
+<li>analytical variables’ information (variable meta-data,
+<code>variableMetadata</code> in short): it corresponds to information
+regarding the variables that have been measured through the analytical
+device; this covers any information about the variables that is not the
+analytical measures themselves (examples: m/z ratios for MS data,
+chemical shift for NMR data)</li>
 </ul>
-<p>These 3 types of information can be stocked in 3 distinct tables. In the package, the chosen format is the following:</p>
+<p>These 3 types of information can be stocked in 3 distinct tables. In
+the package, the chosen format is the following:</p>
 <ul>
-<li>sampleMetadata: the samples’ identifiers are positioned as the first column in the table; the table can contain as many columns as you want, each column being a specific information about samples (<em>e.g.</em> a header indicating ‘Groups’ and the content being ‘A’ or ‘B’ depending on each sample’s affiliation)</li>
-<li>variableMetadata: same idea than the sampleMetadata, but for analytical variables; thus the analytical variables’ identifiers are positioned as the first column in the table, and additional columns correspond to information about the variables (<em>e.g.</em> the p-values associated to each variable regarding a given test applied on each variable)</li>
-<li>dataMatrix: the analytical variables’ identifiers are positioned as the first column, and the samples’ identifiers are given as the header; the remaining cells are quantitative values corresponding to the measured intensities</li>
+<li>sampleMetadata: the samples’ identifiers are positioned as the first
+column in the table; the table can contain as many columns as you want,
+each column being a specific information about samples (<em>e.g.</em> a
+header indicating ‘Groups’ and the content being ‘A’ or ‘B’ depending on
+each sample’s affiliation)</li>
+<li>variableMetadata: same idea than the sampleMetadata, but for
+analytical variables; thus the analytical variables’ identifiers are
+positioned as the first column in the table, and additional columns
+correspond to information about the variables (<em>e.g.</em> the
+p-values associated to each variable regarding a given test applied on
+each variable)</li>
+<li>dataMatrix: the analytical variables’ identifiers are positioned as
+the first column, and the samples’ identifiers are given as the header;
+the remaining cells are quantitative values corresponding to the
+measured intensities</li>
 </ul>
-<p>These 3 tables are standard inputs and/or outputs for several of the functions found in this package. Consequently, when you need to specify sample-wise or variable-wise information, you will generally be invited to stock it in one of these tables (same goes for outputs of functions, where to find the generated information).</p>
+<p>These 3 tables are standard inputs and/or outputs for several of the
+functions found in this package. Consequently, when you need to specify
+sample-wise or variable-wise information, you will generally be invited
+to stock it in one of these tables (same goes for outputs of functions,
+where to find the generated information).</p>
 </div>
 <div id="about-the-types-of-functions-in-the-package" class="section level2">
 <h2>About the types of functions in the package</h2>
-<p>There are several types of functions in the package. Globally, you will find functions enabling the following:</p>
+<p>There are several types of functions in the package. Globally, you
+will find functions enabling the following:</p>
 <ul>
 <li>importing and/or checking parameters (in a Galaxy-oriented way)</li>
 <li>importing and/or checking data tables (in a W4M-oriented way)</li>
 <li>managing identifiers and/or formats</li>
-<li>managing computing information and/or error messages (in a user-targeted way)</li>
+<li>managing computing information and/or error messages (in a
+user-targeted way)</li>
+<li>merging a dataMatrix table with a corresponding metadata table</li>
+<li>filtering a data set following the W4M 3-tables format</li>
+<li>checking the intensities of data with basic indice computations</li>
 </ul>
 </div>
 </div>
 <div id="usage-example-for-galaxy-tools" class="section level1">
 <h1>Usage example for galaxy tools</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(W4MRUtils)</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3">TOOL_NAME &lt;-<span class="st"> &quot;A Test Tool&quot;</span> <span class="co">#nolint</span></a></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">logger &lt;-<span class="st"> </span><span class="kw">get_logger</span>(TOOL_NAME)</a></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Parsing parameters...&quot;</span>)</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - Parsing parameters...[m</span></a>
-<a class="sourceLine" id="cb3-3" title="3">args &lt;-<span class="st"> </span><span class="kw">optparse_parameters</span>(</a>
-<a class="sourceLine" id="cb3-4" title="4">  <span class="dt">input =</span> <span class="kw">optparse_character</span>(),</a>
-<a class="sourceLine" id="cb3-5" title="5">  <span class="dt">output =</span> <span class="kw">optparse_character</span>(),</a>
-<a class="sourceLine" id="cb3-6" title="6">  <span class="dt">threshold =</span> <span class="kw">optparse_numeric</span>(<span class="dt">default =</span> <span class="dv">10</span>),</a>
-<a class="sourceLine" id="cb3-7" title="7">  <span class="dt">args =</span> <span class="kw">commandArgs</span>()</a>
-<a class="sourceLine" id="cb3-8" title="8">)</a>
-<a class="sourceLine" id="cb3-9" title="9">logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Parsing parameters OK.&quot;</span>)</a>
-<a class="sourceLine" id="cb3-10" title="10"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - Parsing parameters OK.[m</span></a>
-<a class="sourceLine" id="cb3-11" title="11"><span class="kw">show_galaxy_header</span>(</a>
-<a class="sourceLine" id="cb3-12" title="12">  TOOL_NAME,</a>
-<a class="sourceLine" id="cb3-13" title="13">  <span class="st">&quot;1.2.0&quot;</span>,</a>
-<a class="sourceLine" id="cb3-14" title="14">  <span class="dt">args =</span> args,</a>
-<a class="sourceLine" id="cb3-15" title="15">  <span class="dt">logger =</span> logger,</a>
-<a class="sourceLine" id="cb3-16" title="16">  <span class="dt">show_sys =</span> <span class="ot">FALSE</span></a>
-<a class="sourceLine" id="cb3-17" title="17">)</a>
-<a class="sourceLine" id="cb3-18" title="18"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - Job starting time:[m</span></a>
-<a class="sourceLine" id="cb3-19" title="19"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - ven. 08 sept. 2023 16:31:35[m</span></a>
-<a class="sourceLine" id="cb3-20" title="20"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - ------------------------------------------------------------------------------[m</span></a>
-<a class="sourceLine" id="cb3-21" title="21"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - Parameters used in A Test Tool - version 1.2.0:[m</span></a>
-<a class="sourceLine" id="cb3-22" title="22"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - [m</span></a>
-<a class="sourceLine" id="cb3-23" title="23"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - List of 4[m</span></a>
-<a class="sourceLine" id="cb3-24" title="24"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] -  $ help     : logi FALSE[m</span></a>
-<a class="sourceLine" id="cb3-25" title="25"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] -  $ input    : chr &quot;/tmp/RtmpsJ5uhs/./input.csv&quot;[m</span></a>
-<a class="sourceLine" id="cb3-26" title="26"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] -  $ output   : chr &quot;/tmp/RtmpsJ5uhs/./output.csv&quot;[m</span></a>
-<a class="sourceLine" id="cb3-27" title="27"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] -  $ threshold: num 2[m</span></a>
-<a class="sourceLine" id="cb3-28" title="28"><span class="co">#&gt; [32m[   info-A Test Tool-16:31:35] - ------------------------------------------------------------------------------[m</span></a></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">check_parameters &lt;-<span class="st"> </span><span class="cf">function</span>(args, logger) {</a>
-<a class="sourceLine" id="cb4-2" title="2">  logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Checking parameters...&quot;</span>)</a>
-<a class="sourceLine" id="cb4-3" title="3">  <span class="kw">check_one_character</span>(args<span class="op">$</span>input)</a>
-<a class="sourceLine" id="cb4-4" title="4">  <span class="kw">check_one_character</span>(args<span class="op">$</span>output)</a>
-<a class="sourceLine" id="cb4-5" title="5">  <span class="kw">check_one_numeric</span>(args<span class="op">$</span>threshold)</a>
-<a class="sourceLine" id="cb4-6" title="6">  <span class="cf">if</span> (args<span class="op">$</span>threshold <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>) {</a>
-<a class="sourceLine" id="cb4-7" title="7">    logger<span class="op">$</span><span class="kw">errorf</span>(</a>
-<a class="sourceLine" id="cb4-8" title="8">      <span class="st">&quot;The threshold is too low (%s). Cannot continue&quot;</span>, args<span class="op">$</span>threshold</a>
-<a class="sourceLine" id="cb4-9" title="9">    )</a>
-<a class="sourceLine" id="cb4-10" title="10">    <span class="kw">stopf</span>(<span class="st">&quot;Threshold = %s is tool low.&quot;</span>, args<span class="op">$</span>threshold)</a>
-<a class="sourceLine" id="cb4-11" title="11">  }</a>
-<a class="sourceLine" id="cb4-12" title="12">  <span class="cf">if</span> (args<span class="op">$</span>threshold <span class="op">&lt;</span><span class="st"> </span><span class="dv">3</span>) {</a>
-<a class="sourceLine" id="cb4-13" title="13">    logger<span class="op">$</span><span class="kw">warningf</span>(</a>
-<a class="sourceLine" id="cb4-14" title="14">      <span class="kw">paste</span>(</a>
-<a class="sourceLine" id="cb4-15" title="15">        <span class="st">&quot;The threshold is very low (%s).&quot;</span>,</a>
-<a class="sourceLine" id="cb4-16" title="16">        <span class="st">&quot;This may lead to erroneous results.&quot;</span></a>
-<a class="sourceLine" id="cb4-17" title="17">      ),</a>
-<a class="sourceLine" id="cb4-18" title="18">      args<span class="op">$</span>threshold</a>
-<a class="sourceLine" id="cb4-19" title="19">    )</a>
-<a class="sourceLine" id="cb4-20" title="20">  }</a>
-<a class="sourceLine" id="cb4-21" title="21">  logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Parameters OK.&quot;</span>)</a>
-<a class="sourceLine" id="cb4-22" title="22">}</a>
-<a class="sourceLine" id="cb4-23" title="23"></a>
-<a class="sourceLine" id="cb4-24" title="24">read_input &lt;-<span class="st"> </span><span class="cf">function</span>(args, logger) {</a>
-<a class="sourceLine" id="cb4-25" title="25">  logger<span class="op">$</span><span class="kw">infof</span>(<span class="st">&quot;Reading file in %s ...&quot;</span>, args<span class="op">$</span>input)</a>
-<a class="sourceLine" id="cb4-26" title="26">  <span class="kw">return</span>(<span class="kw">read.csv</span>(args<span class="op">$</span>input))</a>
-<a class="sourceLine" id="cb4-27" title="27">}</a>
-<a class="sourceLine" id="cb4-28" title="28"></a>
-<a class="sourceLine" id="cb4-29" title="29">process_input &lt;-<span class="st"> </span><span class="cf">function</span>(args, logger, table) {</a>
-<a class="sourceLine" id="cb4-30" title="30">  filter &lt;-<span class="st"> </span>table[<span class="dv">1</span>, ] <span class="op">&gt;</span><span class="st"> </span>args<span class="op">$</span>threshold</a>
-<a class="sourceLine" id="cb4-31" title="31">  logger<span class="op">$</span><span class="kw">infof</span>(</a>
-<a class="sourceLine" id="cb4-32" title="32">    <span class="st">&quot;%s values filtered (%s%%)&quot;</span>,</a>
-<a class="sourceLine" id="cb4-33" title="33">    <span class="kw">length</span>(filter),</a>
-<a class="sourceLine" id="cb4-34" title="34">    <span class="kw">round</span>(<span class="kw">length</span>(filter) <span class="op">/</span><span class="st"> </span><span class="kw">nrow</span>(table) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb4-35" title="35">  )</a>
-<a class="sourceLine" id="cb4-36" title="36">  <span class="cf">if</span> (<span class="kw">length</span>(filter) <span class="op">==</span><span class="st"> </span><span class="kw">nrow</span>(table)) {</a>
-<a class="sourceLine" id="cb4-37" title="37">    logger<span class="op">$</span><span class="kw">warning</span>(<span class="st">&quot;All values have been filtered.&quot;</span>)</a>
-<a class="sourceLine" id="cb4-38" title="38">  }</a>
-<a class="sourceLine" id="cb4-39" title="39">  <span class="kw">return</span>(table[<span class="kw">which</span>(table[, <span class="dv">1</span>] <span class="op">&gt;</span><span class="st"> </span>args<span class="op">$</span>threshold), ])</a>
-<a class="sourceLine" id="cb4-40" title="40">}</a>
-<a class="sourceLine" id="cb4-41" title="41"></a>
-<a class="sourceLine" id="cb4-42" title="42">write_output &lt;-<span class="st"> </span><span class="cf">function</span>(args, logger, output) {</a>
-<a class="sourceLine" id="cb4-43" title="43">  logger<span class="op">$</span><span class="kw">info</span>(<span class="st">&quot;Writing output file...&quot;</span>)</a>
-<a class="sourceLine" id="cb4-44" title="44">  <span class="kw">write.table</span>(output, args<span class="op">$</span>output)</a>
-<a class="sourceLine" id="cb4-45" title="45">}</a>
-<a class="sourceLine" id="cb4-46" title="46"></a>
-<a class="sourceLine" id="cb4-47" title="47"><span class="co"># check_parameters(args, logger$sublogger(&quot;Param Checking&quot;))</span></a>
-<a class="sourceLine" id="cb4-48" title="48"><span class="co"># input &lt;- read_input(args, logger$sublogger(&quot;Inputs Reader&quot;))</span></a>
-<a class="sourceLine" id="cb4-49" title="49"><span class="co"># print(input)</span></a>
-<a class="sourceLine" id="cb4-50" title="50"><span class="co"># output &lt;- process_input(args, logger$sublogger(&quot;Inputs Processing&quot;), input)</span></a>
-<a class="sourceLine" id="cb4-51" title="51"><span class="co"># print(output)</span></a>
-<a class="sourceLine" id="cb4-52" title="52"><span class="co"># write_output(args, logger$sublogger(&quot;Output Writter&quot;), output)</span></a>
-<a class="sourceLine" id="cb4-53" title="53"><span class="co"># show_galaxy_footer(TOOL_NAME, &quot;1.2.0&quot;, logger = logger, show_packages = FALSE)</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(W4MRUtils)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>TOOL_NAME <span class="ot">&lt;-</span> <span class="st">&quot;A Test Tool&quot;</span> <span class="co">#nolint</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>logger <span class="ot">&lt;-</span> <span class="fu">get_logger</span>(TOOL_NAME)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>logger<span class="sc">$</span><span class="fu">info</span>(<span class="st">&quot;Parsing parameters...&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - Parsing parameters...[m</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">optparse_parameters</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">input =</span> <span class="fu">optparse_character</span>(),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">output =</span> <span class="fu">optparse_character</span>(),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="fu">optparse_numeric</span>(<span class="at">default =</span> <span class="dv">10</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">args =</span> <span class="fu">commandArgs</span>()</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>logger<span class="sc">$</span><span class="fu">info</span>(<span class="st">&quot;Parsing parameters OK.&quot;</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - Parsing parameters OK.[m</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="fu">show_galaxy_header</span>(</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>  TOOL_NAME,</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  <span class="st">&quot;1.2.0&quot;</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  <span class="at">args =</span> args,</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  <span class="at">logger =</span> logger,</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  <span class="at">show_sys =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>)</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - Job starting time:[m</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - Mon 27 Oct 2025 16:23:03[m</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - ------------------------------------------------------------------------------[m</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - Parameters used in A Test Tool - version 1.2.0:[m</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - [m</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - List of 4[m</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] -  $ help     : logi FALSE[m</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] -  $ input    : chr &quot;/tmp/RtmpI2oLsq/./input.csv&quot;[m</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] -  $ output   : chr &quot;/tmp/RtmpI2oLsq/./output.csv&quot;[m</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] -  $ threshold: num 2[m</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="co">#&gt; [32m[   info-A Test Tool-16:23:03] - ------------------------------------------------------------------------------[m</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>check_parameters <span class="ot">&lt;-</span> <span class="cf">function</span>(args, logger) {</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  logger<span class="sc">$</span><span class="fu">info</span>(<span class="st">&quot;Checking parameters...&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">check_one_character</span>(args<span class="sc">$</span>input)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">check_one_character</span>(args<span class="sc">$</span>output)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="fu">check_one_numeric</span>(args<span class="sc">$</span>threshold)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="cf">if</span> (args<span class="sc">$</span>threshold <span class="sc">&lt;</span> <span class="dv">1</span>) {</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    logger<span class="sc">$</span><span class="fu">errorf</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      <span class="st">&quot;The threshold is too low (%s). Cannot continue&quot;</span>, args<span class="sc">$</span>threshold</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>    )</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>    <span class="fu">stopf</span>(<span class="st">&quot;Threshold = %s is tool low.&quot;</span>, args<span class="sc">$</span>threshold)</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>  }</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>  <span class="cf">if</span> (args<span class="sc">$</span>threshold <span class="sc">&lt;</span> <span class="dv">3</span>) {</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    logger<span class="sc">$</span><span class="fu">warningf</span>(</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>      <span class="fu">paste</span>(</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>        <span class="st">&quot;The threshold is very low (%s).&quot;</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>        <span class="st">&quot;This may lead to erroneous results.&quot;</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>      ),</span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>      args<span class="sc">$</span>threshold</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>    )</span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>  }</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>  logger<span class="sc">$</span><span class="fu">info</span>(<span class="st">&quot;Parameters OK.&quot;</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>}</span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>read_input <span class="ot">&lt;-</span> <span class="cf">function</span>(args, logger) {</span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>  logger<span class="sc">$</span><span class="fu">infof</span>(<span class="st">&quot;Reading file in %s ...&quot;</span>, args<span class="sc">$</span>input)</span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">read.csv</span>(args<span class="sc">$</span>input))</span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>}</span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>process_input <span class="ot">&lt;-</span> <span class="cf">function</span>(args, logger, table) {</span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>  filter <span class="ot">&lt;-</span> table[<span class="dv">1</span>, ] <span class="sc">&gt;</span> args<span class="sc">$</span>threshold</span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>  logger<span class="sc">$</span><span class="fu">infof</span>(</span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>    <span class="st">&quot;%s values filtered (%s%%)&quot;</span>,</span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>    <span class="fu">length</span>(filter),</span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">length</span>(filter) <span class="sc">/</span> <span class="fu">nrow</span>(table) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>  )</span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(filter) <span class="sc">==</span> <span class="fu">nrow</span>(table)) {</span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>    logger<span class="sc">$</span><span class="fu">warning</span>(<span class="st">&quot;All values have been filtered.&quot;</span>)</span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>  }</span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>  <span class="fu">return</span>(table[<span class="fu">which</span>(table[, <span class="dv">1</span>] <span class="sc">&gt;</span> args<span class="sc">$</span>threshold), ])</span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>}</span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>write_output <span class="ot">&lt;-</span> <span class="cf">function</span>(args, logger, output) {</span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>  logger<span class="sc">$</span><span class="fu">info</span>(<span class="st">&quot;Writing output file...&quot;</span>)</span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>  <span class="fu">write.table</span>(output, args<span class="sc">$</span>output)</span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>}</span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co"># check_parameters(args, logger$sublogger(&quot;Param Checking&quot;))</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co"># input &lt;- read_input(args, logger$sublogger(&quot;Inputs Reader&quot;))</span></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co"># print(input)</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="co"># output &lt;- process_input(args, logger$sublogger(&quot;Inputs Processing&quot;), input)</span></span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a><span class="co"># print(output)</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co"># write_output(args, logger$sublogger(&quot;Output Writter&quot;), output)</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a><span class="co"># show_galaxy_footer(TOOL_NAME, &quot;1.2.0&quot;, logger = logger, show_packages = FALSE)</span></span></code></pre></div>
 </div>
 
 

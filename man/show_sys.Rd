@@ -6,6 +6,9 @@
 \usage{
 show_sys()
 }
+\value{
+\code{NULL}
+}
 \description{
 prints env variables related to R
 }

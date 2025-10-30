@@ -42,6 +42,9 @@ the system variables or not.
 the parameters or not.
 }}
 }
+\value{
+\code{NULL}
+}
 \description{
 This function prints the header to display in galaxy's tools logs
 }

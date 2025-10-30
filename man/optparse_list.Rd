@@ -41,6 +41,10 @@ for a --output param, we could use
 values to translate it as \code{TRUE} value.
 }}
 }
+\value{
+a list to give to \code{optparse_parameters} to build the
+whole command line parsing tool.
+}
 \description{
 To be used with \code{optparse_parameters}. This function tells
 the provided parameter is to be parsed as a list of objects.

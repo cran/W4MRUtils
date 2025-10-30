@@ -21,6 +21,10 @@ for a --output param, we could use
 \item The default value this parameter will hold.
 }}
 }
+\value{
+a list to give to \code{optparse_parameters} to build the
+whole command line parsing tool.
+}
 \description{
 To be used with \code{optparse_parameters}. This function tells
 the provided parameter is to be parsed as an numeric.

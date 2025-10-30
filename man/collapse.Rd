@@ -11,6 +11,9 @@ collapse(..., sep = "")
 
 \item{sep}{set the separator. Deafult is ""}
 }
+\value{
+\code{NULL}
+}
 \description{
 collapse does exactly when paste does, but default collapse = ""
 }

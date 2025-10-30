@@ -34,6 +34,10 @@ if missing}
 \item optparse_list
 }}
 }
+\value{
+A list combining all the elements provided by the optparse_flag, optparse_numeric,
+optparse_integer, optparse_character and/or optparse_list arguments
+}
 \description{
 This function is made to be used with the functions optparse_flag,
 optparse_numeric, optparse_integer, optparse_character and/or
