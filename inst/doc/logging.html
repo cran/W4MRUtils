@@ -388,19 +388,19 @@ can be named and will provide more informations like:</p>
 <h1>How to send messages?</h1>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="do">## messages are printed to the terminal and sent to the log file.</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>logger<span class="sc">$</span><span class="fu">info</span>(<span class="st">&quot;Info message&quot;</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; [32m[   info-LoggerTest3-16:23:04] - Info message[m</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; [32m[   info-LoggerTest3-23:34:26] - Info message[m</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>logger<span class="sc">$</span><span class="fu">warning</span>(<span class="st">&quot;Warning message&quot;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; [33m[warning-LoggerTest3-16:23:04] - Warning message[m</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; [33m[warning-LoggerTest3-23:34:26] - Warning message[m</span></span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>logger<span class="sc">$</span><span class="fu">error</span>(<span class="st">&quot;Error message&quot;</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; [31m[  error-LoggerTest3-16:23:04] - Error message[m</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; [31m[  error-LoggerTest3-23:34:26] - Error message[m</span></span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>logger<span class="sc">$</span><span class="fu">debug</span>(<span class="st">&quot;Debug message&quot;</span>)</span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="do">## debug messages are deactivated by default</span></span>
 <span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>logger<span class="sc">$</span><span class="fu">verbose</span>(<span class="st">&quot;Verbose message&quot;</span>)</span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="do">## verbose messages are deactivated by default</span></span>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">readLines</span>(logfile))</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; [1] &quot;[   info-LoggerTest3-16:23:04] - Info message&quot;   </span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; [2] &quot;[warning-LoggerTest3-16:23:04] - Warning message&quot;</span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; [3] &quot;[  error-LoggerTest3-16:23:04] - Error message&quot;</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; [1] &quot;[   info-LoggerTest3-23:34:26] - Info message&quot;   </span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; [2] &quot;[warning-LoggerTest3-23:34:26] - Warning message&quot;</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; [3] &quot;[  error-LoggerTest3-23:34:26] - Error message&quot;</span></span>
 <span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="fu">file.remove</span>(logfile)</span>
 <span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
@@ -440,7 +440,7 @@ get_logger function:</p>
 <span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  ),</span>
 <span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>  <span class="at">show_debug =</span> <span class="cn">TRUE</span></span>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>)<span class="sc">$</span><span class="fu">info</span>(<span class="st">&quot;Infos are orange&quot;</span>)<span class="sc">$</span><span class="fu">debug</span>(<span class="st">&quot;Debug is red&quot;</span>)</span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; [32m[16:23:04-Processing] - Infos are orange[m</span></span></code></pre></div>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; [32m[23:34:26-Processing] - Infos are orange[m</span></span></code></pre></div>
 </div>
 
 

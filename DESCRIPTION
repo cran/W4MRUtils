@@ -1,6 +1,6 @@
 Package: W4MRUtils
 Title: Useful Functions for Harmonized W4M Tool Development
-Version: 1.2.1
+Version: 1.2.2
 Authors@R: c(
     person("Lain", "Pavot", "", "lain.pavot@inrae.fr", role = c("aut")),
     person("Melanie", "Petera", "", "melanie.petera@inrae.fr", role = c("aut", "cre")),
@@ -27,10 +27,10 @@ Collate: dataframe_helpers.R miniTools.R RcheckLibrary.R
         optparse_helper.R galaxy.R logging.R utils.R
         Filtering_datasets.R intensity_checks.R
 NeedsCompilation: no
-Packaged: 2025-10-27 15:23:05 UTC; melpetera
+Packaged: 2026-04-22 21:34:28 UTC; melpetera
 Author: Lain Pavot [aut],
   Melanie Petera [aut, cre],
   Helge Hecht [ctb]
 Maintainer: Melanie Petera <melanie.petera@inrae.fr>
 Repository: CRAN
-Date/Publication: 2025-10-30 20:20:21 UTC
+Date/Publication: 2026-04-22 22:20:02 UTC

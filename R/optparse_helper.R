@@ -18,7 +18,7 @@
 #'
 #' str(optparse_parameters(
 #'   a_parameter = optparse_flag(),
-#'   args = list("--a-parameter")
+#'   args = list("--a-parameter", "FALSE")
 #' ))
 #'
 #' @author L.Pavot
@@ -30,9 +30,11 @@ optparse_flag <- function(
 ) {
   return(list(
     opt_str = short,
-    action = "store_true",
+    type = "logical",
+    action = "store",
     help = help,
-    default = default
+    default = default,
+    metavar = "flag"
   ))
 }
 

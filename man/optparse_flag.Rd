@@ -35,7 +35,7 @@ the value is FALSE. Otherwise, it is TRUE.
 
 str(optparse_parameters(
   a_parameter = optparse_flag(),
-  args = list("--a-parameter")
+  args = list("--a-parameter", "FALSE")
 ))
 
 }
